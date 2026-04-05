@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fadeaway Barbershop — Sharp Cuts, Clean Fades</title>
+  <meta name="description" content="Fadeaway Barbershop. Premium cuts, classic fades, modern style. Book your chair.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-2: #1c1c1c;
+      --text: #f5f5f5;
+      --muted: #8a8a8a;
+      --accent: #d4a24c;
+      --accent-hover: #e6b35c;
+      --border: #2a2a2a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor-dot, .cursor-ring {
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease, background 0.2s ease;
+    }
+    .cursor-dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      transition: transform 0.2s ease, width 0.25s ease, height 0.25s ease, border-color 0.2s ease;
+    }
+    .cursor-ring.hover {
+      width: 60px; height: 60px;
+      border-color: var(--accent-hover);
+      background: rgba(212, 162, 76, 0.1);
+    }
+    @media (max-width: 768px) {
+      body { cursor: auto; }
+      .cursor-dot, .cursor-ring { display: none; }
+    }
+
+    h1, h2, h3 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.02em; line-height: 1; }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; border: none; background: none; color: inherit; cursor: none; }
+    @media (max-width: 768px) { button { cursor: pointer; } }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 20px 24px;
+      z-index: 100;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease, padding 0.3s ease;
+    }
+    nav.scrolled {
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(12px);
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 0.1em;
+    }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      padding: 10px 20px;
+      background: var(--accent);
+      color: var(--bg);
+      border-radius: 2px;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .nav-cta:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .nav-cta::after { display: none; }
+
+    @media (max-width: 768px) {
+      .nav-links a:not(.nav-cta) { display: none; }
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 120px 24px 80px;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 40%, rgba(212, 162, 76, 0.08), transparent 60%);
+      pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 2; width: 100%; max-width: 1200px; margin: 0 auto; }
+    .hero-tag {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.1s forwards;
+    }
+    .hero-tag::before {
+      content: '';
+      display: inline-block;
+      width: 40px; height: 1px;
+      background: var(--accent);
+      vertical-align: middle;
+      margin-right: 12px;
+    }
+    .hero h1 {
+      font-size: clamp(56px, 11vw, 160px);
+      margin-bottom: 32px;
+    }
+    .hero h1 .line { display: block; overflow: hidden; }
+    .hero h1 .line span {
+      display: inline-block;
+      transform: translateY(110%);
+      animation: slideUp 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    .hero h1 .line:nth-child(1) span { animation-delay: 0.2s; }
+    .hero h1 .line:nth-child(2) span { animation-delay: 0.35s; color: var(--accent); font-style: italic; }
+    .hero h1 .line:nth-child(3) span { animation-delay: 0.5s; }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 540px;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.7s forwards;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.9s forwards;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 28px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary { background: var(--accent); color: var(--bg); }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212, 162, 76, 0.3); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn .arrow { transition: transform 0.25s ease; }
+    .btn:hover .arrow { transform: translateX(4px); }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.2s forwards;
+    }
+    .scroll-hint::after {
+      content: '';
+      display: block;
+      width: 1px; height: 40px;
+      background: var(--muted);
+      margin: 12px auto 0;
+      animation: scrollLine 2s ease-in-out infinite;
+      transform-origin: top;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(20px); }
+    }
+    @keyframes slideUp {
+      to { transform: translateY(0); }
+    }
+    @keyframes scrollLine {
+      0%, 100% { transform: scaleY(0.3); }
+      50% { transform: scaleY(1); }
+    }
+
+    /* Marquee */
+    .marquee {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 24px 0;
+      background: var(--surface);
+    }
+    .marquee-track {
+      display: flex;
+      gap: 60px;
+      animation: marquee 30s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-track span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 40px;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .marquee-track span.accent { color: var(--accent); }
+    .marquee-track .dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      align-self: center;
+    }
+    @keyframes marquee {
+      to { transform: translateX(-50%); }
+    }
+
+    /* Sections */
+    section { padding: 120px 24px; position: relative; }
+    .section-head { margin-bottom: 64px; max-width: 800px; }
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .section-head h2 { font-size: clamp(40px, 6vw, 72px); }
+    .section-head p { color: var(--muted); margin-top: 20px; max-width: 580px; font-size: 17px; }
+
+    /* Services */
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      border-top: 1px solid var(--border);
+    }
+    .service {
+      display: grid;
+      grid-template-columns: 60px 1fr auto auto;
+      gap: 32px;
+      align-items: center;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: none;
+      transition: padding 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+      position: relative;
+    }
+    @media (max-width: 768px) { .service { cursor: pointer; } }
+    .service::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -24px; right: -24px; bottom: 0;
+      background: var(--surface);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      z-index: -1;
+    }
+    .service:hover { padding: 32px 24px; }
+    .service:hover::before { opacity: 1; }
+    .service:hover .service-name { color: var(--accent); transform: translateX(8px); }
+    .service:hover .service-arrow { opacity: 1; transform: translateX(0); }
+    .service-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+    .service-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(28px, 4vw, 44px);
+      transition: color 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .service-price {
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .service-arrow {
+      font-size: 20px;
+      color: var(--accent);
+      opacity: 0;
+      transform: translateX(-12px);
+      transition: all 0.35s ease;
+    }
+    @media (max-width: 640px) {
+      .service { grid-template-columns: 40px 1fr auto; gap: 16px; }
+      .service-arrow { display: none; }
+    }
+
+    /* About / Story */
+    .about {
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 48px; } }
+    .about-visual {
+      aspect-ratio: 4/5;
+      background: linear-gradient(135deg, var(--surface-2), var(--bg));
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .about-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 20px,
+        rgba(212, 162, 76, 0.03) 20px,
+        rgba(212, 162, 76, 0.03) 40px
+      );
+    }
+    .barber-pole {
+      width: 60px;
+      height: 70%;
+      border-radius: 30px;
+      background: repeating-linear-gradient(
+        45deg,
+        #fff 0px, #fff 15px,
+        #d4a24c 15px, #d4a24c 30px,
+        #1a1a1a 30px, #1a1a1a 45px
+      );
+      animation: pole 3s linear infinite;
+      box-shadow: 0 0 60px rgba(212, 162, 76, 0.2);
+      position: relative;
+      z-index: 2;
+    }
+    .barber-pole::before, .barber-pole::after {
+      content: '';
+      position: absolute;
+      left: -8px; right: -8px;
+      height: 20px;
+      background: linear-gradient(180deg, #3a3a3a, #1a1a1a);
+      border-radius: 4px;
+    }
+    .barber-pole::before { top: -24px; }
+    .barber-pole::after { bottom: -24px; }
+    @keyframes pole {
+      to { background-position: 0 -90px; }
+    }
+
+    .about-text h2 { font-size: clamp(36px, 5vw, 60px); margin-bottom: 24px; }
+    .about-text p { color: var(--muted); font-size: 17px; margin-bottom: 16px; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Hours / Visit */
+    .visit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+    }
+    @media (max-width: 768px) { .visit-grid { grid-template-columns: 1fr; gap: 40px; } }
+    .visit-card {
+      padding: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .visit-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .visit-card h3 { font-size: 28px; margin-bottom: 24px; letter-spacing: 0.05em; }
+    .hours-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+    }
+    .hours-row:last-child { border-bottom: none; }
+    .hours-row .day { color: var(--muted); letter-spacing: 0.05em; }
+    .hours-row .time { font-weight: 500; }
+    .hours-row.closed .time { color: var(--accent); }
+    .visit-info { color: var(--muted); line-height: 1.8; }
+    .visit-info strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 4px; letter-spacing: 0.05em; }
+    .visit-info .info-block { margin-bottom: 20px; }
+
+    /* CTA */
+    .cta-final {
+      text-align: center;
+      padding: 160px 24px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-final::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(212, 162, 76, 0.08), transparent 60%);
+    }
+    .cta-final > * { position: relative; z-index: 1; }
+    .cta-final h2 { font-size: clamp(48px, 8vw, 110px); margin-bottom: 32px; }
+    .cta-final h2 em { color: var(--accent); font-style: italic; }
+    .cta-final p { color: var(--muted); font-size: 18px; margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+    /* Footer */
+    footer {
+      padding: 48px 24px 32px;
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-inner p { font-size: 13px; color: var(--muted); }
+    .socials { display: flex; gap: 16px; }
+    .socials a {
+      width: 36px; height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      transition: all 0.25s ease;
+    }
+    .socials a:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    /* Reveal animations */
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+  </style>
+</head>
+<body>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="#" class="logo">FADE<span>AWAY</span></a>
+      <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#story">Story</a>
+        <a href="#visit">Visit</a>
+        <a href="#book" class="nav-cta">Book Now</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">Est. 2014 — Downtown</div>
+      <h1>
+        <span class="line"><span>Sharp Cuts.</span></span>
+        <span class="line"><span>Clean Fades.</span></span>
+        <span class="line"><span>No Bullshit.</span></span>
+      </h1>
+      <p class="hero-sub">Classic craft meets modern style. Walk in a regular, walk out a legend.</p>
+      <div class="hero-actions">
+        <a href="#book" class="btn btn-primary">Book Your Chair <span class="arrow">→</span></a>
+        <a href="#services" class="btn btn-ghost">View Services</a>
+      </div>
+    </div>
+    <div class="scroll-hint">Scroll</div>
+  </header>
+
+  <div class="marquee">
+    <div class="marquee-track">
+      <span>Fades</span><span class="dot"></span>
+      <span class="accent">Tapers</span><span class="dot"></span>
+      <span>Beards</span><span class="dot"></span>
+      <span class="accent">Hot Towels</span><span class="dot"></span>
+      <span>Straight Razor</span><span class="dot"></span>
+      <span class="accent">Kids Cuts</span><span class="dot"></span>
+      <span>Fades</span><span class="dot"></span>
+      <span class="accent">Tapers</span><span class="dot"></span>
+      <span>Beards</span><span class="dot"></span>
+      <span class="accent">Hot Towels</span><span class="dot"></span>
+      <span>Straight Razor</span><span class="dot"></span>
+      <span class="accent">Kids Cuts</span><span class="dot"></span>
+    </div>
+  </div>
+
+  <section id="services">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow">What We Do</div>
+        <h2>The Services</h2>
+        <p>Every cut is hand-tailored. Every fade, dialed in. Pick your ride.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service reveal">
+          <div class="service-num">01</div>
+          <div class="service-name">Signature Cut</div>
+          <div class="service-price">$38 · 45 min</div>
+          <div class="service-arrow">→</div>
+        </div>
+        <div class="service reveal">
+          <div class="service-num">02</div>
+          <div class="service-name">Skin Fade</div>
+          <div class="service-price">$42 · 45 min</div>
+          <div class="service-arrow">→</div>
+        </div>
+        <div class="service reveal">
+          <div class="service-num">03</div>
+          <div class="service-name">Beard Sculpt</div>
+          <div class="service-price">$25 · 30 min</div>
+          <div class="service-arrow">→</div>
+        </div>
+        <div class="service reveal">
+          <div class="service-num">04</div>
+          <div class="service-name">The Full Works</div>
+          <div class="service-price">$65 · 75 min</div>
+          <div class="service-arrow">→</div>
+        </div>
+        <div class="service reveal">
+          <div class="service-num">05</div>
+          <div class="service-name">Hot Towel Shave</div>
+          <div class="service-price">$35 · 40 min</div>
+          <div class="service-arrow">→</div>
+        </div>
+        <div class="service reveal">
+          <div class="service-num">06</div>
+          <div class="service-name">Kids Cut (under 12)</div>
+          <div class="service-price">$25 · 30 min</div>
+          <div class="service-arrow">→</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="story" class="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-visual reveal">
+          <div class="barber-pole"></div>
+        </div>
+        <div class="about-text reveal reveal-delay-1">
+          <div class="eyebrow">Our Story</div>
+          <h2>Built on Craft. Run on Respect.</h2>
+          <p>Fadeaway started in a one-chair basement with a pair of clippers and a promise — do right by every head that sits down.</p>
+          <p>A decade later, we're still that same shop. Just louder music, sharper blades, and a whole lot more regulars who feel like family.</p>
+          <div class="stats">
+            <div>
+              <div class="stat-num">10+</div>
+              <div class="stat-label">Years</div>
+            </div>
+            <div>
+              <div class="stat-num">6</div>
+              <div class="stat-label">Barbers</div>
+            </div>
+            <div>
+              <div class="stat-num">12K</div>
+              <div class="stat-label">Cuts/Yr</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="visit">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow">Come Through</div>
+        <h2>Hours & Location</h2>
+      </div>
+      <div class="visit-grid">
+        <div class="visit-card reveal">
+          <h3>Hours</h3>
+          <div class="hours-row"><span class="day">Monday</span><span class="time">9AM — 7PM</span></div>
+          <div class="hours-row"><span class="day">Tuesday</span><span class="time">9AM — 7PM</span></div>
+          <div class="hours-row"><span class="day">Wednesday</span><span class="time">9AM — 7PM</span></div>
+          <div class="hours-row"><span class="day">Thursday</span><span class="time">9AM — 8PM</span></div>
+          <div class="hours-row"><span class="day">Friday</span><span class="time">9AM — 8PM</span></div>
+          <div class="hours-row"><span class="day">Saturday</span><span class="time">8AM — 6PM</span></div>
+          <div class="hours-row closed"><span class="day">Sunday</span><span class="time">Closed</span></div>
+        </div>
+        <div class="visit-card reveal reveal-delay-1">
+          <h3>Find Us</h3>
+          <div class="visit-info">
+            <div class="info-block">
+              <strong>Address</strong>
+              412 Main Street<br>
+              Downtown, Suite 2
+            </div>
+            <div class="info-block">
+              <strong>Phone</strong>
+              (555) 234-1890
+            </div>
+            <div class="info-block">
+              <strong>Email</strong>
+              cuts@fadeaway.co
+            </div>
+            <div class="info-block">
+              <strong>Walk-ins</strong>
+              Welcome, but booking's better.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="book" class="cta-final">
+    <div class="eyebrow reveal">Ready?</div>
+    <h2 class="reveal reveal-delay-1">Take <em>the chair.</em></h2>
+    <p class="reveal reveal-delay-2">Book online in 30 seconds. Your barber's waiting.</p>
+    <a href="#" class="btn btn-primary reveal reveal-delay-3">Book Now <span class="arrow">→</span></a>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <p>© 2026 Fadeaway Barbershop. All rights reserved.</p>
+      <div class="socials">
+        <a href="#" aria-label="Instagram">IG</a>
+        <a href="#" aria-label="TikTok">TT</a>
+        <a href="#" aria-label="Facebook">FB</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const dot = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+    });
+
+    function animateRing() {
+      ringX += (mouseX - ringX) * 0.18;
+      ringY += (mouseY - ringY) * 0.18;
+      ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // Cursor hover states
+    document.querySelectorAll('a, button, .service').forEach(el => {
+      el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+    });
+
+    // Nav scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Reveal on scroll
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
